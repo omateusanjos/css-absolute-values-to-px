@@ -13,22 +13,25 @@ program
   .option("-h, --help", "ϟ Check documentation: https://github.com/omateusanjos/css-absolute-values-to-px")
   .parse(process.argv);
 
-async function main() {
-  const options = program.opts();
 
-  if (options.help) {
-    program.outputHelp();
-    process.exit(0);
+  async function main() {
+    const options = program.opts();
+  
+    if (options.help) {
+      program.outputHelp();
+      process.exit(0);
+    }
+  
+    const { directory, extensions, excludeFolders = [] } = options;
+  
+    if (!directory || !extensions) {
+      console.error("Usage: my-script -d <directory> -e <extensions> [-x <excludeFolders>] [-h]");
+      process.exit(1);
+    }
+  
+    await processDirectory(directory, extensions.split(","), excludeFolders.split(","));
   }
-
-  const { directory, extensions, excludeFolders = [] } = options;
-
-  if (!directory || !extensions) {
-    console.error("Usage: my-script -d <directory> -e <extensions> [-x <excludeFolders>] [-h]");
-    process.exit(1);
-  }
-
-  await processDirectory(directory, extensions.split(","), excludeFolders.split(","));
-}
-
-main();
+  
+  main().catch((error) => {
+    console.error(`An error occurred: ${error}`);
+  });
