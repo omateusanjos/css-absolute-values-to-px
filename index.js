@@ -1,5 +1,10 @@
-import { readFileSync, writeFileSync, readdirSync } from "fs";
-import { join } from "path";
+const fs = require("fs");
+const path = require("path");
+
+const readFileSync = fs.readFileSync;
+const writeFileSync = fs.writeFileSync;
+const readdirSync = fs.readdirSync;
+const join = path.join;
 
 
 function convertToPx(value) {
