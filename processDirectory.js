@@ -5,8 +5,15 @@ async function processFile(filePath) {
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
     const convertedContent = fileContent.replace(
-      /(-?\b\d+\b)(?![\s\S]*["'])(?=[,;])/g,
-      (_, value) => `"${value + 'px'}"`
+      /(-?\b\d+(?:\.\d+)?\b)(?![\s\S]*["'])(?=[,;])/g,
+      (_, value) => {
+        // Check if the value is already wrapped in double quotes
+        if (value.startsWith('"') && value.endsWith('"')) {
+          return value;
+        } else {
+          return `"${value}px"`;
+        }
+      }
     );
 
     await fs.writeFile(filePath, convertedContent);
@@ -16,7 +23,11 @@ async function processFile(filePath) {
   }
 }
 
-async function processDirectory(directoryPath, extensions, excludedFolders = []) {
+async function processDirectory(
+  directoryPath,
+  extensions,
+  excludedFolders = []
+) {
   try {
     const files = await fs.readdir(directoryPath);
 

@@ -1,6 +1,6 @@
 {
   "name": "css-absolute-values-to-px",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "main": "index.js",
   "author": "https://github.com/omateusanjos",
   "repository": "https://github.com/omateusanjos/css-absolute-values-to-px",
