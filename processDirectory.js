@@ -5,8 +5,8 @@ async function processFile(filePath) {
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
     const convertedContent = fileContent.replace(
-      /(\b\d+\b)(?![\s\S]*["'])(?=[,;])/g,
-      (_, value) => `"${value}px"`
+      /(-?\b\d+\b)(?![\s\S]*["'])(?=[,;])/g,
+      (_, value) => `"${value + 'px'}"`
     );
 
     await fs.writeFile(filePath, convertedContent);

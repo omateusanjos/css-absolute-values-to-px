@@ -28,8 +28,8 @@ program
       console.error("Usage: my-script -d <directory> -e <extensions> [-x <excludeFolders>] [-h]");
       process.exit(1);
     }
-  
-    await processDirectory(directory, extensions.split(","), excludeFolders.split(","));
+    const excludedFolders = excludeFolders.length > 1 ? excludeFolders.split(",") : [];
+    await processDirectory(directory, extensions.split(","), excludedFolders);
   }
   
   main().catch((error) => {
