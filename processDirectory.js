@@ -4,16 +4,28 @@ const path = require("path");
 async function processFile(filePath) {
   try {
     const fileContent = await fs.readFile(filePath, "utf8");
-    const convertedContent = fileContent.replace(
-      /(-?\b\d+\b)(?![\s\S]*["'])(?=[,;])/g,
-      (_, value) => `"${value + "px"}"`
-    );
+    const modifiedContent = transformJavaScriptObjects(fileContent);
 
-    await fs.writeFile(filePath, convertedContent);
-    console.log(`File update: ${filePath}`);
+    if (fileContent === modifiedContent) {
+      return console.log(`File skipped: ${filePath}. Please, open a issue.`);
+    }
+
+    await fs.writeFile(filePath, modifiedContent);
+    console.log(`File updated: ${filePath}`);
   } catch (error) {
     console.error(`Error converting ${filePath}: ${error}`);
   }
+}
+
+function transformJavaScriptObjects(fileContent) {
+  const objectPattern = /({[^{}]*})/g;
+
+  return fileContent.replace(objectPattern, (match) => {
+    return match.replace(
+      /(-?\b\d+\b)(?![\s\S]*["'])(?=:|\s*[;,}])/g,
+      (_, value) => `"${value}px"`
+    );
+  });
 }
 
 async function processDirectory(
