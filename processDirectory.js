@@ -21,10 +21,40 @@ function transformJavaScriptObjects(fileContent) {
   const objectPattern = /({[^{}]*})/g;
 
   return fileContent.replace(objectPattern, (match) => {
-    return match.replace(
-      /(-?\b\d+\b)(?![\s\S]*["'])(?=:|\s*[;,}])/g,
-      (_, value) => `"${value}px"`
+    const lines = match.split("\n");
+    const modifiedLines = [];
+
+    let properties = [];
+    let rest = [];
+
+    for (const line of lines) {
+      if (
+        line.match(/("[^"]+":\s*)?(-?\b\d+\b)(?![\s\S]*["'])(?=:|\s*[;,}])/)
+      ) {
+        properties.push(line);
+      } else {
+        rest.push(line);
+      }
+    }
+
+    if (rest.length > 0) {
+      modifiedLines.push(...rest.slice(0, -1));
+    }
+
+    modifiedLines.push(
+      ...properties.map((line) => {
+        return line.replace(
+          /(-?\b\d+\b)(?![\s\S]*["'])(?=:|\s*[;,}])/g,
+          (_, value) => `"${value}px"`
+        );
+      })
     );
+
+    if (rest.length > 0) {
+      modifiedLines.push(rest[rest.length - 1]);
+    }
+
+    return modifiedLines.join("\n");
   });
 }
 
